@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "oicq": "^2.2.0",
+    "pinyin-pro": "^3.11.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.6"
   },

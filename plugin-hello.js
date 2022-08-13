@@ -1,7 +1,9 @@
 "use strict"
 const { segment } = require("oicq")
 const { bot } = require("./index")
+const { group_token } = require("./groupToken")
 const rp = require('request-promise');
+const { pinyin } = require('pinyin-pro');
 
 const options = {
   method: 'POST',
@@ -93,24 +95,40 @@ bot.on("message", async function (msg) {
 	// }
 })
 
-// 撤回和发送群消息
-bot.on("message.group",async function (msg) {
-	const msgObj = msg.message[0]
-	if (msgObj.type === 'text' && /^请问.{2}/.test(msgObj.text)) {
-		console.log(msgObj.text.split('请问')[1])
-		const returnMsg = await getArr(msgObj.text.split('请问')[1])
-		// console.log('returnMsg')
-		// console.log(returnMsg)
-		msg.reply(returnMsg, true)
-		// msg.reply(msgObj.text.split('请问'), true)
-		// /^[活动]{2}/
-		// const question = msgObj.text.split(' ')
-		// msg.reply(question[1], true)
-		// console.log(question)
-	} 
+const getWeather = async (city) => {
+	const str = pinyin(city, { toneType: 'none' }).split(" ").join("")
+	try {
+		const res = await rp({
+			method: 'POST',
+			url: 'https://api.seniverse.com/v3/weather/daily.json?key=SCYrvkytJze9qyzOh&location=' + str + '&language=zh-Hans&unit=c',
+			body: [],
+			json: true // Automatically stringifies the body to JSON
+		})
+		const todayWeather = res.results[0].daily[0] || ''
+		return city + '今日白天' + todayWeather.text_day + '，夜间' + todayWeather.text_night + '，温度为' + todayWeather.low + '-' + todayWeather.high
+	} catch (err) {
+		return '该城市API不支持'
+	}
+}
 
-	// msg.group.sendMsg(segment.dice())
-	// msg.group.sendMsg('2113')
+// 撤回和发送群消息
+// 监听群消息 鉴权 判断该群有什么权限 如果是请问开头的就进行判断
+bot.on("message.group",async function (msg) {
+	if (group_token[msg.group_id]) {
+		const msgObj = msg.message[0]
+		if (/天气$/.test(msgObj.text)) {
+			const weatherText = await getWeather(msgObj.text.split('天气')[0])
+			msg.reply(weatherText, true)
+		}
+	}
+
+	// const msgObj = msg.message[0]
+	// if (msgObj.type === 'text' && /^请问.{2}/.test(msgObj.text)) {
+	// 	console.log(msgObj.text.split('请问')[1])
+	// 	const returnMsg = await getArr(msgObj.text.split('请问')[1])
+	// 	msg.reply(returnMsg, true)
+	// } 
+
 	// console.log(msg)
 	// if (msg.raw_message === "dice") {
 	// 	// 撤回这条消息
