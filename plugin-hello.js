@@ -121,35 +121,38 @@ const getEpidemicInfo = async (city) => {
 			body: [],
 			json: true // Automatically stringifies the body to JSON
 		})
-		if (city === '国内') {
-			return '国内共有' + res.data.statisGradeCityDetail.length + '个地区有疫情'
-		} else {
-			const errArr = res.data.statisGradeCityDetail
-			let ans = 0
-			for(let i = 0; i < errArr.length; i++) {
-				if ('杭州' === errArr[i].city) {
-					console.log(errArr[i])
-				}
-
-
-
-				// 如果问的是省的话
-				// if (city === errArr[i].province) {
-				// 	ans += errArr[i].nowConfirm
-				// } else if (city === errArr[i].city) {
-				// 	ans = errArr[i].nowConfirm
-				// }
-			}
-			// if (ans) {
-			// 	return '该地区当前共有' + ans + '例'
-			// } else {
-			// 	return '该地区查不到病例，可能是当前该地区无确诊或输入的地区错误'
-			// }
-			return ''
-		}
+		return ''
 	} catch (err) {
 		return 'API不支持'
 	}
+}
+
+// 今天在学校吃什么
+const getSchoolEat = async () => {
+	const location = ['南食堂3楼', '南食堂2楼', '南食堂1楼']
+	const recipeMap = {
+		'南食堂3楼': [
+			'排骨米饭', '香麻鸡', '牛扒饭', '锡纸烧', '钢盆拌饭', '四川风味', '牛肉板面', '鸡腿拌饭', '麻辣江湖', 
+			'羊杂面', '懒人闷饭', '酸辣苕粉', '鸡排饭', '铁板煎肉饭', '重庆豌杂面', '边家传人饺子', '欢乐小火锅', '麻辣烫麻辣拌麻辣香锅', 
+			'憨小猪猪脚饭', '食全食美', '花甲粉', '兰州拉面', '烤肉饭', '馋嘴鱼', '干锅砂锅', '美食丰味'
+		],
+		'南食堂2楼': [
+			'啵啵鱼', '猪脚饭', '云吞面', '西安牛肉拉面', '三胖子快餐', '烤盘饭', '牛排饭', '东北菜套餐', '面夫子', 
+			'盛京大碗面', '学友快餐部', '韩国料理', '江湖鱼', '马玛李全国连锁', '自选快餐', '自选炸串', '麻辣烫', '小碗蒸菜', '重庆鸡公煲', '自助火锅',
+		],
+		'南食堂1楼': [
+			'食全套餐', '杭州小笼包肠粉', '青竹快餐', '韩式拌饭', '咖喱饭', '和味快餐', '鸡腿烤肉饭', '掉渣饼', '鸡汁鲜肉饭', '淮南牛肉汤', 
+			'汤香米粉米线', '小胖哥麻辣烫', '竹筒煎肉饭', '老祁头铁板炒肉炒饭', '日式风味', '羊杂面', '四川风味', '抻面', '一九八零锡纸饭', '风味小馄饨'
+		]
+	}
+	const where = location[Math.floor(Math.random()*location.length)]
+	const what = recipeMap[where][Math.floor(Math.random()*recipeMap[where].length)]
+	return where + what
+}
+
+// 机器人能做什么
+const botCanDo = () => {
+	return '可以询问（地点）天气，请问（学校问题），今天在学校吃什么，今天吃什么，今天吃什么好的等问题，均可以回答'
 }
 
 // 撤回和发送群消息
@@ -164,7 +167,16 @@ bot.on("message.group",async function (msg) {
 		msg.reply(await getArr(msgObj.text), true)
 	} else if ( /疫情$/.test(msgObj.text) &&  thisToken.includes(2)) {
 		// msg.reply(await getEpidemicInfo(msgObj.text.split('疫情')[0]), true)
+	} else if (msgObj.text === '今天在学校吃什么' &&  thisToken.includes('sauFood')) {
+		msg.reply(await getSchoolEat(), true)
+	} else if (msgObj.text === '机器人功能') {
+		msg.reply(botCanDo(), true)
+	} else if (msgObj.text === '今天吃什么' && thisToken.includes('todayEat')) {
+
+	} else if (msgObj.text === '今天吃什么好的' && thisToken.includes('todayEatGood')) {
+
 	}
+
 
 	// const msgObj = msg.message[0]
 	// if (msgObj.type === 'text' && /^请问.{2}/.test(msgObj.text)) {
