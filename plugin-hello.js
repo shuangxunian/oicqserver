@@ -95,6 +95,7 @@ bot.on("message", async function (msg) {
 	// }
 })
 
+// 获取天气信息
 const getWeather = async (city) => {
 	const str = pinyin(city, { toneType: 'none' }).split(" ").join("")
 	try {
@@ -111,15 +112,58 @@ const getWeather = async (city) => {
 	}
 }
 
-// 撤回和发送群消息
-// 监听群消息 鉴权 判断该群有什么权限 如果是请问开头的就进行判断
-bot.on("message.group",async function (msg) {
-	if (group_token[msg.group_id]) {
-		const msgObj = msg.message[0]
-		if (/天气$/.test(msgObj.text)) {
-			const weatherText = await getWeather(msgObj.text.split('天气')[0])
-			msg.reply(weatherText, true)
+// 获取疫情信息
+const getEpidemicInfo = async (city) => {
+	try {
+		const res = await rp({
+			method: 'POST',
+			url: 'https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=statisGradeCityDetail,diseaseh5Shelf',
+			body: [],
+			json: true // Automatically stringifies the body to JSON
+		})
+		if (city === '国内') {
+			return '国内共有' + res.data.statisGradeCityDetail.length + '个地区有疫情'
+		} else {
+			const errArr = res.data.statisGradeCityDetail
+			let ans = 0
+			for(let i = 0; i < errArr.length; i++) {
+				if ('杭州' === errArr[i].city) {
+					console.log(errArr[i])
+				}
+
+
+
+				// 如果问的是省的话
+				// if (city === errArr[i].province) {
+				// 	ans += errArr[i].nowConfirm
+				// } else if (city === errArr[i].city) {
+				// 	ans = errArr[i].nowConfirm
+				// }
+			}
+			// if (ans) {
+			// 	return '该地区当前共有' + ans + '例'
+			// } else {
+			// 	return '该地区查不到病例，可能是当前该地区无确诊或输入的地区错误'
+			// }
+			return ''
 		}
+	} catch (err) {
+		return 'API不支持'
+	}
+}
+
+// 撤回和发送群消息
+// 监听群消息 鉴权 判断该群有什么权限
+bot.on("message.group",async function (msg) {
+	const msgObj = msg.message[0]
+	const groupId = msg.group_id
+	const thisToken = group_token[groupId]
+	if ( /天气$/.test(msgObj.text) && thisToken.includes(1)) {
+		msg.reply(await getWeather(msgObj.text.split('天气')[0]), true)
+	} else if ( /^请问/.test(msgObj.text) && thisToken.includes(0)) {
+		msg.reply(await getArr(msgObj.text), true)
+	} else if ( /疫情$/.test(msgObj.text) &&  thisToken.includes(2)) {
+		// msg.reply(await getEpidemicInfo(msgObj.text.split('疫情')[0]), true)
 	}
 
 	// const msgObj = msg.message[0]
