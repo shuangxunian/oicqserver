@@ -18,8 +18,7 @@ const conMap = [
 	['你是不是出问题了','你在狗叫什么'],
 	['你有几个对象','你在狗叫什么'],
 	['你相过几次亲','你在狗叫什么'],
-	['校花是谁','你在狗叫什么'],
-	['校草是谁','你在狗叫什么'],
+	['怎么狗叫','你在狗叫什么'],
 	['男生可以找男朋友吗','你在狗叫什么'],
 	['宿舍怎么样','宿舍环境'],
 	['食堂怎么样','食堂'],
@@ -45,7 +44,7 @@ const conMap = [
 	['日常开销是多少','生活消费'],
 	['生活费要多少','生活消费'],
 	['赞助','赞助'],
-	// ['',''],
+	['代码','代码'],
 	// ['',''],
 	// ['',''],
 	// ['',''],
@@ -53,7 +52,7 @@ const conMap = [
 
 const reqMap = {
 	'地理位置': '地址是辽宁省沈阳市沈北新区道义南大街37号，周边是沈师、辽大、辽传、工程，学校所在的沈北新区不算郊区，交通方便，按照地理位置分为南北区，只有一个校区，南区北区说的是南生活区、北生活区，简称南区北区，步行大概十分钟的距离，宿舍楼有高有矮，高层有电梯，快递驿站南北区都有',
-	'你在狗叫什么': '你在狗叫什么',
+	'你在狗叫什么': segment.image('img/2.jpg'),
 	'宿舍环境': '宿舍是早六点供电，晚十一点准时断电；没有独立卫浴，没有空调风扇，可以自己准备小风扇。上下铺，六人寝，可以和室友商量调换上下铺；每人两个柜子，充电插口大概两个或三个，需要自己接插排',
 	'食堂': '食堂不贵 吃的挺好',
 	'男女比': '沈航男女总体比例7比3，工科学校都这样，经管设艺女生较多，大多专业男生多。',
@@ -66,7 +65,8 @@ const reqMap = {
 	'图书馆': '非常漂亮，圆柱形设计，也非常大，有七层，每层都可以看书学习，在沈阳市都可以排名数一数二的地位。进图书馆需要学生证，而且半小时内不能重复进入，一楼有咖啡厅，二三楼可以一边借书，一边学习，往上楼层是自习的地方。进入图书馆自习是需要预约的，可以提前三天预约，这个图书馆预约制度严格，管理很好。学习环境还是不错的。',
 	'行李快递': '行李快递是完全可以的，地址就是沈阳市沈北新区道义大街沈阳航空航天大学，建议提前两三天快递',
 	'生活消费': '1000能吃饱，1500能吃好',
-	'赞助': '我很可爱，请给我钱，谢谢老板',
+	'赞助': segment.image("https://api2.mubu.com/v3/document_image/b82c48b0-c46a-49d0-a677-523355524518-3807603.jpg"),
+	'代码': '代码在github上，仓库是：shuangxunian/oicqserver，欢迎点个star哦~'
 	// '': '',
 }
 
@@ -97,19 +97,26 @@ bot.on("message", async function (msg) {
 
 // 获取天气信息
 const getWeather = async (city) => {
-	const str = pinyin(city, { toneType: 'none' }).split(" ").join("")
 	try {
 		const res = await rp({
 			method: 'POST',
-			url: 'https://api.seniverse.com/v3/weather/daily.json?key=SCYrvkytJze9qyzOh&location=' + str + '&language=zh-Hans&unit=c',
+			url: 'https://www.tianqiapi.com/free/day?appid=56761788&appsecret=ti3hP8y9&city=' + encodeURI(city),
 			body: [],
 			json: true // Automatically stringifies the body to JSON
 		})
-		const todayWeather = res.results[0].daily[0] || ''
-		return city + '今日白天' + todayWeather.text_day + '，夜间' + todayWeather.text_night + '，温度为' + todayWeather.low + '-' + todayWeather.high
+		if (res.errcode === 100) return segment.image('img/2.jpg')
+		return city + '今日' + res.wea + '，温度为' + res.tem_night + '-' + res.tem_day + '，当前温度' + res.tem
 	} catch (err) {
 		return '该城市API不支持'
 	}
+	// const res = await rp({
+	// 	method: 'POST',
+	// 	url: 'https://www.tianqiapi.com/free/day?appid=56761788&appsecret=ti3hP8y9&city=' + encodeURI(city),
+	// 	body: [],
+	// 	json: true // Automatically stringifies the body to JSON
+	// })
+	// console.log('res')
+	// console.log(res)
 }
 
 // 获取疫情信息
@@ -128,8 +135,9 @@ const getEpidemicInfo = async (city) => {
 }
 
 // 今天在学校吃什么
+// 先随机生成地点 再根据地点随机该层的吃的
 const getSchoolEat = async () => {
-	const location = ['南食堂3楼', '南食堂2楼', '南食堂1楼']
+	const location = ['南食堂3楼', '南食堂2楼', '南食堂1楼', '南区女寝对面食堂']
 	const recipeMap = {
 		'南食堂3楼': [
 			'排骨米饭', '香麻鸡', '牛扒饭', '锡纸烧', '钢盆拌饭', '四川风味', '牛肉板面', '鸡腿拌饭', '麻辣江湖', 
@@ -143,6 +151,9 @@ const getSchoolEat = async () => {
 		'南食堂1楼': [
 			'食全套餐', '杭州小笼包肠粉', '青竹快餐', '韩式拌饭', '咖喱饭', '和味快餐', '鸡腿烤肉饭', '掉渣饼', '鸡汁鲜肉饭', '淮南牛肉汤', 
 			'汤香米粉米线', '小胖哥麻辣烫', '竹筒煎肉饭', '老祁头铁板炒肉炒饭', '日式风味', '羊杂面', '四川风味', '抻面', '一九八零锡纸饭', '风味小馄饨'
+		],
+		'南区女寝对面食堂': [
+			'肯德基', '自选快餐', '盒饭'
 		]
 	}
 	const where = location[Math.floor(Math.random()*location.length)]
@@ -155,12 +166,36 @@ const botCanDo = () => {
 	return '可以询问（地点）天气，请问（学校问题），今天在学校吃什么，今天吃什么，今天吃什么好的等问题，均可以回答'
 }
 
+// 今天吃什么
+const getEat = () => {
+	const recipeArr = [
+		'冒菜', '海南鸡饭', '悟粉', '重庆小面', '蒸饺', '水饺', '猪脚饭', '尚品佳味', '原牛道', '蒸菜', '尊宝披萨', '臻食荟', '五谷渔粉', '铁板烧', '麦当劳', '肯德基', '必胜客', '赛百味', '华莱士', '赛百味', 
+	]
+	return recipeArr[Math.floor(Math.random()*recipeArr.length)]
+}
+// 今天吃什么好的
+const getGoodEat = () => {
+	const recipeArr = [
+		'烤肉', '海底捞', '小龙坎', '必胜客', '外婆家', '川菜', '铁锅炖', '肉串', '家常炒菜', '自助烤肉', '自助火锅', '汉巴味德', '酸菜鱼'
+	]
+	return recipeArr[Math.floor(Math.random()*recipeArr.length)]
+}
+
+// 今天喝什么
+const getDrink = () => {
+	const recipeArr = [
+		'一点点', '茶百道', '蜜雪冰城', '星巴克', '喜茶', '奈雪の茶', '瑞幸'
+	]
+	return recipeArr[Math.floor(Math.random()*recipeArr.length)]
+}
+
+
 // 撤回和发送群消息
 // 监听群消息 鉴权 判断该群有什么权限
 bot.on("message.group",async function (msg) {
 	const msgObj = msg.message[0]
 	const groupId = msg.group_id
-	const thisToken = group_token[groupId]
+	const thisToken = group_token[groupId] || []
 	if ( /天气$/.test(msgObj.text) && thisToken.includes(1)) {
 		msg.reply(await getWeather(msgObj.text.split('天气')[0]), true)
 	} else if ( /^请问/.test(msgObj.text) && thisToken.includes(0)) {
@@ -172,9 +207,13 @@ bot.on("message.group",async function (msg) {
 	} else if (msgObj.text === '机器人功能') {
 		msg.reply(botCanDo(), true)
 	} else if (msgObj.text === '今天吃什么' && thisToken.includes('todayEat')) {
-
+		msg.reply(getEat(), true)
 	} else if (msgObj.text === '今天吃什么好的' && thisToken.includes('todayEatGood')) {
-
+		msg.reply(getGoodEat(), true)
+	} else if (msgObj.text === '今天喝什么' && thisToken.includes('todayDrink')) {
+		msg.reply(getDrink(), true)
+	} else if (msgObj.text === 'wlsnb!' || msgObj.text === 'wlsnb') {
+		msg.reply(segment.image('img/2.jpg'), true)
 	}
 
 
