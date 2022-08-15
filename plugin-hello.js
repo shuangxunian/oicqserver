@@ -7,7 +7,7 @@ const { pinyin } = require('pinyin-pro');
 
 const options = {
   method: 'POST',
-  url: 'http://192.168.31.23:5000/getss',
+  url: 'http://localhost:5000/getss',
   body: [],
   json: true // Automatically stringifies the body to JSON
 };
