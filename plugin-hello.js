@@ -1,87 +1,22 @@
 "use strict"
 const { segment } = require("oicq")
 const { bot } = require("./index")
-const { group_token } = require("./groupToken")
-const rp = require('request-promise');
-const { pinyin } = require('pinyin-pro');
+const { group_token, qq_token } = require("./groupToken")
+const {
+	getWeather,
+	getArr,
+	getSchoolEat,
+	botCanDo,
+	getEat,
+	getGoodEat,
+	getDrink,
+	// cacheAllDateInfo,
+	getAllDateInfo,
 
-const options = {
-  method: 'POST',
-  url: 'http://localhost:5000/getss',
-  body: [],
-  json: true // Automatically stringifies the body to JSON
-};
+} = require("./unit")
 
-const conMap = [
-	['学校在哪','地理位置'],
-	['学校地址是什么','地理位置'],
-	['你是不是出问题了','你在狗叫什么'],
-	['你有几个对象','你在狗叫什么'],
-	['你相过几次亲','你在狗叫什么'],
-	['怎么狗叫','你在狗叫什么'],
-	['男生可以找男朋友吗','你在狗叫什么'],
-	['宿舍怎么样','宿舍环境'],
-	['食堂怎么样','食堂'],
-	['吃的怎么样','食堂'],
-	['学校女生多吗','男女比'],
-	['男女比多少','男女比'],
-	['学校男女比多吗','男女比'],
-	['快递呢','快递'],
-	['快递去哪取','快递'],
-	['行李可以快递吗','快递行李'],
-	['周围有什么好吃的吗','美食推荐'],
-	['可以点外卖吗','外卖'],
-	['健身房','健身房'],
-	['学校内有羽毛球馆吗','健身房'],
-	['作者是谁','作者'],
-	['你是谁','作者'],
-	['你是什么','作者'],
-	['澡堂是啥样的','澡堂'],
-	['澡堂是通的吗','澡堂'],
-	['怎么洗澡','澡堂'],
-	['图书馆','图书馆'],
-	['图书馆怎么样','图书馆'],
-	['日常开销是多少','生活消费'],
-	['生活费要多少','生活消费'],
-	['赞助','赞助'],
-	['代码','代码'],
-	// ['',''],
-	// ['',''],
-	// ['',''],
-]
 
-const reqMap = {
-	'地理位置': '地址是辽宁省沈阳市沈北新区道义南大街37号，周边是沈师、辽大、辽传、工程，学校所在的沈北新区不算郊区，交通方便，按照地理位置分为南北区，只有一个校区，南区北区说的是南生活区、北生活区，简称南区北区，步行大概十分钟的距离，宿舍楼有高有矮，高层有电梯，快递驿站南北区都有',
-	'你在狗叫什么': segment.image('img/2.jpg'),
-	'宿舍环境': '宿舍是早六点供电，晚十一点准时断电；没有独立卫浴，没有空调风扇，可以自己准备小风扇。上下铺，六人寝，可以和室友商量调换上下铺；每人两个柜子，充电插口大概两个或三个，需要自己接插排',
-	'食堂': '食堂不贵 吃的挺好',
-	'男女比': '沈航男女总体比例7比3，工科学校都这样，经管设艺女生较多，大多专业男生多。',
-	'快递': '大多数快递都在南区，中通能放进来的时候就在北区',
-	'美食推荐': '校内南北区食堂都不错，能出校的话外面的积家也有好吃的，但是不建议吃学校周围的自助',
-	'外卖': '校内的外卖都能点，校外的要看学校会不会抓，还有能点外卖送到床的公众号',
-	'健身房': '校内有健身房，室内羽毛球、篮球馆，均收费，需要带学生证和白卡入内',
-	'作者': '我是由霜序廿所设计的AI机器人，技术栈为 Node + python，模型选用 oicq + paddlenlp',
-	'澡堂': '不是独立卫浴，是通透的大澡堂，没有遮挡，南区北区都有',
-	'图书馆': '非常漂亮，圆柱形设计，也非常大，有七层，每层都可以看书学习，在沈阳市都可以排名数一数二的地位。进图书馆需要学生证，而且半小时内不能重复进入，一楼有咖啡厅，二三楼可以一边借书，一边学习，往上楼层是自习的地方。进入图书馆自习是需要预约的，可以提前三天预约，这个图书馆预约制度严格，管理很好。学习环境还是不错的。',
-	'行李快递': '行李快递是完全可以的，地址就是沈阳市沈北新区道义大街沈阳航空航天大学，建议提前两三天快递',
-	'生活消费': '1000能吃饱，1500能吃好',
-	'赞助': segment.image("https://api2.mubu.com/v3/document_image/b82c48b0-c46a-49d0-a677-523355524518-3807603.jpg"),
-	'代码': '代码在github上，仓库是：shuangxunian/oicqserver，欢迎点个star哦~'
-	// '': '',
-}
 
-const getArr = async (text) => {
-	const arr = []
-	for (let i = 0; i < conMap.length; i++) {
-		arr.push([text,conMap[i][0]])
-	}
-	options.body = arr
-	const conIndex = await rp(options)
-	// console.log('conIndex')
-	// console.log(conIndex)
-	if (conIndex === -1) return '我不知道你在说什么'
-	else return reqMap[conMap[conIndex][1]]
-}
 
 // hello world
 bot.on("message", async function (msg) {
@@ -95,100 +30,16 @@ bot.on("message", async function (msg) {
 	// }
 })
 
-// 获取天气信息
-const getWeather = async (city) => {
-	try {
-		const res = await rp({
-			method: 'POST',
-			url: 'https://www.tianqiapi.com/free/day?appid=56761788&appsecret=ti3hP8y9&city=' + encodeURI(city),
-			body: [],
-			json: true // Automatically stringifies the body to JSON
-		})
-		if (res.errcode === 100) return segment.image('img/2.jpg')
-		return city + '今日' + res.wea + '，温度为' + res.tem_night + '-' + res.tem_day + '，当前温度' + res.tem
-	} catch (err) {
-		return '该城市API不支持'
-	}
-	// const res = await rp({
-	// 	method: 'POST',
-	// 	url: 'https://www.tianqiapi.com/free/day?appid=56761788&appsecret=ti3hP8y9&city=' + encodeURI(city),
-	// 	body: [],
-	// 	json: true // Automatically stringifies the body to JSON
-	// })
-	// console.log('res')
-	// console.log(res)
-}
 
-// 获取疫情信息
-const getEpidemicInfo = async (city) => {
-	try {
-		const res = await rp({
-			method: 'POST',
-			url: 'https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=statisGradeCityDetail,diseaseh5Shelf',
-			body: [],
-			json: true // Automatically stringifies the body to JSON
-		})
-		return ''
-	} catch (err) {
-		return 'API不支持'
-	}
-}
 
-// 今天在学校吃什么
-// 先随机生成地点 再根据地点随机该层的吃的
-const getSchoolEat = async () => {
-	const location = ['南食堂3楼', '南食堂2楼', '南食堂1楼', '南区女寝对面食堂']
-	const recipeMap = {
-		'南食堂3楼': [
-			'排骨米饭', '香麻鸡', '牛扒饭', '锡纸烧', '钢盆拌饭', '四川风味', '牛肉板面', '鸡腿拌饭', '麻辣江湖', 
-			'羊杂面', '懒人闷饭', '酸辣苕粉', '鸡排饭', '铁板煎肉饭', '重庆豌杂面', '边家传人饺子', '欢乐小火锅', '麻辣烫麻辣拌麻辣香锅', 
-			'憨小猪猪脚饭', '食全食美', '花甲粉', '兰州拉面', '烤肉饭', '馋嘴鱼', '干锅砂锅', '美食丰味'
-		],
-		'南食堂2楼': [
-			'啵啵鱼', '猪脚饭', '云吞面', '西安牛肉拉面', '三胖子快餐', '烤盘饭', '牛排饭', '东北菜套餐', '面夫子', 
-			'盛京大碗面', '学友快餐部', '韩国料理', '江湖鱼', '马玛李全国连锁', '自选快餐', '自选炸串', '麻辣烫', '小碗蒸菜', '重庆鸡公煲', '自助火锅',
-		],
-		'南食堂1楼': [
-			'食全套餐', '杭州小笼包肠粉', '青竹快餐', '韩式拌饭', '咖喱饭', '和味快餐', '鸡腿烤肉饭', '掉渣饼', '鸡汁鲜肉饭', '淮南牛肉汤', 
-			'汤香米粉米线', '小胖哥麻辣烫', '竹筒煎肉饭', '老祁头铁板炒肉炒饭', '日式风味', '羊杂面', '四川风味', '抻面', '一九八零锡纸饭', '风味小馄饨'
-		],
-		'南区女寝对面食堂': [
-			'肯德基', '自选快餐', '盒饭'
-		]
-	}
-	const where = location[Math.floor(Math.random()*location.length)]
-	const what = recipeMap[where][Math.floor(Math.random()*recipeMap[where].length)]
-	return where + what
-}
 
-// 机器人能做什么
-const botCanDo = () => {
-	return '可以询问（地点）天气，请问（学校问题），今天在学校吃什么，今天吃什么，今天吃什么好的等问题，均可以回答'
-}
 
-// 今天吃什么
-const getEat = () => {
-	const recipeArr = [
-		'冒菜', '海南鸡饭', '悟粉', '重庆小面', '蒸饺', '水饺', '猪脚饭', '尚品佳味', '原牛道', '蒸菜', '尊宝披萨', '臻食荟', '五谷渔粉', '铁板烧', '麦当劳', '肯德基', '必胜客', '赛百味', '华莱士', '赛百味', 
-	]
-	return recipeArr[Math.floor(Math.random()*recipeArr.length)]
-}
-// 今天吃什么好的
-const getGoodEat = () => {
-	const recipeArr = [
-		'烤肉', '海底捞', '小龙坎', '必胜客', '外婆家', '川菜', '铁锅炖', '肉串', '家常炒菜', '自助烤肉', '自助火锅', '汉巴味德', '酸菜鱼'
-	]
-	return recipeArr[Math.floor(Math.random()*recipeArr.length)]
-}
 
-// 今天喝什么
-const getDrink = () => {
-	const recipeArr = [
-		'一点点', '茶百道', '蜜雪冰城', '星巴克', '喜茶', '奈雪の茶', '瑞幸'
-	]
-	return recipeArr[Math.floor(Math.random()*recipeArr.length)]
-}
 
+
+
+// bot.sendGroupMsg(681467770,segment.image('img/1.jpg'))
+// bot.sendMsg(836473734,segment.image('img/1.jpg'))
 
 // 撤回和发送群消息
 // 监听群消息 鉴权 判断该群有什么权限
@@ -214,6 +65,8 @@ bot.on("message.group",async function (msg) {
 		msg.reply(getDrink(), true)
 	} else if (msgObj.text === 'wlsnb!' || msgObj.text === 'wlsnb') {
 		msg.reply(segment.image('img/2.jpg'), true)
+	} else if (msgObj.text === '今日情况') {
+		msg.reply(global.cacheAllDateInfo, true)
 	}
 
 
@@ -240,18 +93,18 @@ bot.on("message.group",async function (msg) {
 // 	msg.group.sendMsg('2113')
 // })
 
-const tigang = () => {
-	// bot.sendGroupMsg(681467770,segment.image('img/1.jpg'))
-	// bot.sendGroupMsg(729462289,segment.image('img/1.jpg'))
-}
+// const tigang = () => {
+// 	bot.sendGroupMsg(681467770,segment.image('img/1.jpg'))
+// 	bot.sendGroupMsg(729462289,segment.image('img/1.jpg'))
+// }
 
-setTimeout(() => {
-	tigang()
-}, 1000);
+// setTimeout(() => {
+// 	bot.pickFriend(2749909223).sendMsg(segment.image('img/1.jpg'))
+// }, 1000);
 
-setInterval(() => {
-	tigang()
-},1000*3600*3);
+// setInterval(() => {
+// 	tigang()
+// },1000*3600*3);
 
 
 // 接收戳一戳
