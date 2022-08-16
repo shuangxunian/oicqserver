@@ -107,3 +107,6 @@ data
 
 # process
 .bash_profile
+
+# vscode
+.vscode
