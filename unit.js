@@ -127,7 +127,7 @@ const pushUserInfo = async () => {
 		try {
 			bot.pickFriend(qqToken[i].qq).sendMsg(msg)
 		} catch (error) {
-			bot.pickFriend(2749909223).sendMsg(error)
+			bot.pickFriend(2749909223).sendMsg(123)
 		}
 	}
 }
@@ -151,7 +151,7 @@ const pushGroupInfo = async () => {
 		try {
 			bot.sendGroupMsg(groupToken[i].group,sendMsg(msg))
 		} catch (error) {
-			bot.pickFriend(2749909223).sendMsg(error)
+			bot.pickFriend(2749909223).sendMsg(456)
 		}
 	}
 }
