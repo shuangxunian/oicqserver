@@ -135,6 +135,7 @@ const pushUserInfo = async () => {
 // 每日发送的群消息
 const pushGroupInfo = async () => {
 	const groupToken = group_setTime_token || []
+	bot.pickFriend(2749909223).sendMsg(groupToken.toString())
 	if (!global.cacheAllDateInfo) await getAllDateInfo()
 	for (let i = 0; i < groupToken.length; i++) {
 		bot.pickFriend(2749909223).sendMsg(groupToken[i].group)
