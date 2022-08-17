@@ -4,7 +4,7 @@ const { pinyin } = require('pinyin-pro');
 const { segment } = require("oicq")
 const { bot } = require("./index")
 
-const { group_token, qq_token } = require("./groupToken")
+const { group_token, qq_setTime_token, group_setTime_token } = require("./groupToken")
 
 // 日期信息的缓存，防止请求API次数过多
 global.cacheAllDateInfo = ''
@@ -38,31 +38,6 @@ const getWeather = async (city) => {
 	}
 }
 
-// 每日发送的消息
-const pushUserInfo = async () => {
-	const qqToken = qq_token || []
-	await getAllDateInfo()
-	for (let i = 0; i < qqToken.length; i++) {
-		let msg = qqToken[i].hello
-		if (qqToken[i].weather) {
-			msg = msg + await getWeather(qqToken[i].weather) + '，'
-		}
-		const haveFun = qqToken[i].haveFun
-		// 日历
-		if (haveFun.includes(0)) {
-			msg = msg + global.cacheAllDateInfo 
-		}
-		// 工资
-		if (haveFun.includes(1)) { 
-			msg = msg + getWage()
-		}
-		try {
-			bot.pickFriend(qqToken[i].qq).sendMsg(msg)
-		} catch (error) {
-			console.log('error')
-		}
-	}
-}
 
 // 获取离发工资还有多少天
 const getWage = () => {
@@ -127,7 +102,59 @@ const getAllDateInfo = async () => {
 		const fixDay = ['工作日', '周末', '节日', '调休']
 		global.cacheAllDateInfo  = `今天是${today}，${weekText[week]}，是${fixDay[todayInfo.type.type]}，离得最近的假期是${nextHoliday.holiday.name}，还有${nextHoliday.holiday.rest}天。`
 	} catch (error) {
-		console.log('apierror')
+		bot.pickFriend(2749909223).sendMsg(error)
+	}
+}
+
+// 每日发送的消息
+const pushUserInfo = async () => {
+	const qqToken = qq_setTime_token || []
+	if (!global.cacheAllDateInfo) await getAllDateInfo()
+	for (let i = 0; i < qqToken.length; i++) {
+		let msg = qqToken[i].hello
+		if (qqToken[i].weather) {
+			msg = msg + await getWeather(qqToken[i].weather) + '，'
+		}
+		const haveFun = qqToken[i].haveFun
+		// 日历
+		if (haveFun.includes(0)) {
+			msg = msg + global.cacheAllDateInfo 
+		}
+		// 工资
+		if (haveFun.includes(1)) { 
+			msg = msg + getWage()
+		}
+		try {
+			bot.pickFriend(qqToken[i].qq).sendMsg(msg)
+		} catch (error) {
+			bot.pickFriend(2749909223).sendMsg(error)
+		}
+	}
+}
+
+// 每日发送的群消息
+const pushGroupInfo = async () => {
+	const groupToken = group_setTime_token || []
+	if (!global.cacheAllDateInfo) await getAllDateInfo()
+	for (let i = 0; i < groupToken.length; i++) {
+		let msg = groupToken[i].hello
+		if (groupToken[i].weather) {
+			msg = msg + await getWeather(groupToken[i].weather) + '，'
+		}
+		const haveFun = groupToken[i].haveFun
+		// 日历
+		if (haveFun.includes(0)) {
+			msg = msg + global.cacheAllDateInfo 
+		}
+		// 工资
+		if (haveFun.includes(1)) { 
+			msg = msg + getWage()
+		}
+		try {
+			bot.sendGroupMsg(groupToken[i].group,sendMsg(msg))
+		} catch (error) {
+			bot.pickFriend(2749909223).sendMsg(error)
+		}
 	}
 }
 
@@ -281,6 +308,33 @@ const getArr = async (text) => {
 	else return reqMap[conMap[conIndex][1]]
 }
 
+const getReturnGroup = async (text, groupId) => {
+	const thisToken = group_token[groupId] || []
+	let res = ''
+	if ( /天气$/.test(text) && thisToken.includes(1)) {
+		res = await getWeather(text.split('天气')[0])
+	} else if ( /^请问/.test(text) && thisToken.includes(0)) {
+		res = await getArr(text)
+	} else if ( /疫情$/.test(text) &&  thisToken.includes(2)) {
+		// res = await getEpidemicInfo(text.split('疫情')[0]), true
+	} else if (text === '今天在学校吃什么' &&  thisToken.includes('sauFood')) {
+		res = await getSchoolEat()
+	} else if (text === '机器人功能') {
+		res = botCanDo()
+	} else if (text === '今天吃什么' && thisToken.includes('todayEat')) {
+		res = getEat()
+	} else if (text === '今天吃什么好的' && thisToken.includes('todayEatGood')) {
+		res = getGoodEat()
+	} else if (text === '今天喝什么' && thisToken.includes('todayDrink')) {
+		res = getDrink()
+	} else if (text === 'wlsnb!' || text === 'wlsnb') {
+		res = segment.image('img/2.jpg')
+	} else if (text === '今日情况') {
+		res = global.cacheAllDateInfo
+	}
+	return res
+}
+
 
 exports.getWeather = getWeather
 exports.getAllDateInfo = getAllDateInfo
@@ -294,6 +348,8 @@ exports.botCanDo = botCanDo
 exports.getEat = getEat
 exports.getGoodEat = getGoodEat
 exports.getDrink = getDrink
+exports.pushGroupInfo = pushGroupInfo
+exports.getReturnGroup = getReturnGroup
 
 
 
