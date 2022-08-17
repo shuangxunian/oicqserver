@@ -138,12 +138,12 @@ const pushGroupInfo = async () => {
 	bot.pickFriend(2749909223).sendMsg(groupToken.toString())
 	if (!global.cacheAllDateInfo) await getAllDateInfo()
 	for (let i = 0; i < groupToken.length; i++) {
+		let msg = groupToken[i].hello
 		const haveFun = groupToken[i].haveFun
 		// 日历
 		if (haveFun.includes(0)) {
 			msg = msg + global.cacheAllDateInfo 
 		}
-		let msg = groupToken[i].hello
 		if (groupToken[i].weather) {
 			msg = msg + await getWeather(groupToken[i].weather) + '，'
 		}
