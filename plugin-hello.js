@@ -46,8 +46,7 @@ bot.on("message", async function (msg) {
 // 监听群消息 鉴权 判断该群有什么权限
 bot.on("message.group",async function (msg) {
 	const resMsg = await getReturnGroup(msg.message[0].text, msg.group_id)
-	console.log(resMsg)
-	msg.reply(resMsg, true)
+	if (resMsg) msg.reply(resMsg, true)
 	// const msgObj = msg.message[0].text
 	// const groupId = msg.group_id
 	// const thisToken = group_token[groupId] || []
