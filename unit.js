@@ -157,6 +157,9 @@ const pushGroupInfo = async () => {
 // 每天提肛
 const standUp = async () => {
 	const groupToken = group_setTime_token || []
+	const standUpFun = () => {
+		bot.sendGroupMsg(groupToken[i].group,segment.image('img/1.jpg'))
+	}
 	for (let i = 0; i < groupToken.length; i++) {
 		const haveFun = groupToken[i].haveFun
 		// 日历
@@ -167,7 +170,7 @@ const standUp = async () => {
 					interval: 24,
 					runNow: false,
 					time: standUpTime[j]
-				},bot.sendGroupMsg(groupToken[i].group,segment.image('img/1.jpg')))
+				},standUpFun)
 			}
 		}
 	}

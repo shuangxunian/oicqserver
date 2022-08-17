@@ -14,6 +14,7 @@ exports.group_token = {
   128887010: [0, 1, 2, 3, 'sauFood', 'todayEat', 'todayEatGood', 'todayDrink'],
   557114010: [0, 1, 2, 3, 'sauFood', 'todayEat', 'todayEatGood', 'todayDrink'],
   435936368: [1, 'todayEat', 'todayEatGood', 'todayDrink'],
+  536101225: [1, 'todayEat', 'todayEatGood', 'todayDrink'],
   1167425449: [1, 'todayEat', 'todayEatGood', 'todayDrink'],
 }
 
