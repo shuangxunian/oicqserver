@@ -13,7 +13,6 @@ exports.group_token = {
   729462289: [0, 1, 2, 3, 'sauFood', 'todayEat', 'todayEatGood', 'todayDrink'],
   128887010: [0, 1, 2, 3, 'sauFood', 'todayEat', 'todayEatGood', 'todayDrink'],
   557114010: [0, 1, 2, 3, 'sauFood', 'todayEat', 'todayEatGood', 'todayDrink'],
-  681467770: [1, 'todayEat', 'todayEatGood', 'todayDrink'],
   435936368: [1, 'todayEat', 'todayEatGood', 'todayDrink'],
   1167425449: [1, 'todayEat', 'todayEatGood', 'todayDrink'],
 }
@@ -49,7 +48,7 @@ exports.qq_setTime_token = [
 // 1 提肛
 exports.group_setTime_token = [
   {
-    group: 681467770,
+    group: 536101225,
     hello: '群友们早上好，',
     weather: '杭州',
     haveFun: [0, 1]

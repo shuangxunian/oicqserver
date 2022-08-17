@@ -165,7 +165,7 @@ const standUp = async () => {
 			for (let j = 0; j < standUpTime.length; j++) {
 				timeoutFunc({
 					interval: 24,
-					runNow: true,
+					runNow: false,
 					time: standUpTime[j]
 				},bot.sendGroupMsg(groupToken[i].group,segment.image('img/1.jpg')))
 			}
