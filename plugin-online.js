@@ -1,5 +1,6 @@
 "use strict"
 const { bot } = require("./index")
+const { segment } = require("oicq")
 const {
 	pushUserInfo,
 	getAllDateInfo,
