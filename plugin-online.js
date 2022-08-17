@@ -21,7 +21,7 @@ bot.on("system.online", function () {
 	// 每天早上私聊信息
 	timeoutFunc({
 		interval: 24,
-		runNow: true,
+		runNow: false,
 		time: '08:00:00'
 	},pushUserInfo)
 

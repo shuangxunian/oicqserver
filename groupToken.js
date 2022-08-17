@@ -27,34 +27,49 @@ exports.qq_setTime_token = [
     hello: '霜霜早上好，',
     weather: '杭州',
     haveFun: [0, 1]
-  },
+  }, {
+    qq: 1506413394,
+    hello: '娜姐早上好，',
+    weather: '杭州',
+    haveFun: [0, 1]
+  }, {
+    qq: 365717424,
+    hello: '乌兹早上好，',
+    weather: '杭州',
+    haveFun: [0, 1]
+  }, {
+    qq: 361772818,
+    hello: '周巍早上好，',
+    weather: '杭州',
+    haveFun: [0, 1]
+  }
 ]
 
 
 exports.group_setTime_token = [
   {
     group: 681467770,
-    hello: '群友们早上好',
+    hello: '群友们早上好，',
     weather: '杭州',
     haveFun: [0]
   }, {
     group: 729462289,
-    hello: '同学们早上好',
+    hello: '同学们早上好，',
     weather: '沈阳',
     haveFun: [0]
   }, {
     group: 557114010,
-    hello: '同学们早上好',
+    hello: '同学们早上好，',
     weather: '沈阳',
     haveFun: [0]
   }, {
     group: 128887010,
-    hello: '同学们早上好',
+    hello: '同学们早上好，',
     weather: '沈阳',
     haveFun: [0]
   }, {
     group: 435936368,
-    hello: '同学们早上好',
+    hello: '同学们早上好，',
     weather: '杭州',
     haveFun: [0]
   }, 
