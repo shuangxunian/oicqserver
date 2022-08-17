@@ -148,6 +148,10 @@ const pushGroupInfo = async () => {
 		if (haveFun.includes(0)) {
 			msg = msg + global.cacheAllDateInfo 
 		}
+		console.log('---')
+		console.log(groupToken[i].group)
+		console.log(msg)
+		console.log('---')
 		try {
 			bot.sendGroupMsg(groupToken[i].group,sendMsg(msg))
 		} catch (error) {
