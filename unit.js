@@ -27,12 +27,13 @@ const getWeather = async (city) => {
 	try {
 		const res = await rp({
 			method: 'POST',
-			url: 'https://www.tianqiapi.com/free/day?appid=56761788&appsecret=ti3hP8y9&city=' + encodeURI(city),
+			url: `https://geoapi.qweather.com/v2/city/lookup?key=${process.env.weatherAPI}&location=${city}`,
 			body: [],
 			json: true // Automatically stringifies the body to JSON
 		})
-		if (res.errcode === 100) return segment.image('img/2.jpg')
-		return city + '今日' + res.wea + '，温度为' + res.tem_night + '-' + res.tem_day + '，当前温度' + res.tem
+		console.log(res)
+		// if (res.errcode === 100) return segment.image('img/2.jpg')
+		// return city + '今日' + res.wea + '，温度为' + res.tem_night + '-' + res.tem_day + '，当前温度' + res.tem
 	} catch (err) {
 		return '该城市API不支持'
 	}
@@ -162,8 +163,7 @@ const standUp = async () => {
 	}
 	for (let i = 0; i < groupToken.length; i++) {
 		const haveFun = groupToken[i].haveFun
-		// 日历
-		const standUpTime = ['9:30:00', '10:30:00', '14:30:00', '15:30:00', '16:30:00']
+		const standUpTime = ['09:30:00', '10:30:00', '14:30:00', '15:30:00', '16:30:00']
 		if (haveFun.includes(1)) {
 			for (let j = 0; j < standUpTime.length; j++) {
 				timeoutFunc({
@@ -226,7 +226,8 @@ const botCanDo = () => {
 // 今天吃什么
 const getEat = () => {
 	const recipeArr = [
-		'冒菜', '海南鸡饭', '悟粉', '重庆小面', '蒸饺', '水饺', '猪脚饭', '尚品佳味', '原牛道', '蒸菜', '尊宝披萨', '臻食荟', '五谷渔粉', '铁板烧', '麦当劳', '肯德基', '必胜客', '赛百味', '华莱士', '赛百味', 
+		'冒菜', '海南鸡饭', '悟粉', '重庆小面', '蒸饺', '水饺', '猪脚饭', '尚品佳味', '原牛道', '蒸菜', '尊宝披萨', '臻食荟', '五谷渔粉', '铁板烧', '麦当劳', '肯德基', '必胜客', '赛百味', '华莱士', '赛百味', '蛋炒饭',
+		'烧花鸭', '红烧兔头'
 	]
 	return recipeArr[Math.floor(Math.random()*recipeArr.length)]
 }
@@ -264,6 +265,9 @@ const conMap = [
 	['怎么狗叫','你在狗叫什么'],
 	['男生可以找男朋友吗','你在狗叫什么'],
 	['宿舍怎么样','宿舍环境'],
+	['学校宿舍','宿舍环境'],
+	['学校是几人寝','宿舍环境'],
+	['宿舍是几人寝','宿舍环境'],
 	['食堂怎么样','食堂'],
 	['吃的怎么样','食堂'],
 	['学校女生多吗','男女比'],
