@@ -156,6 +156,7 @@ const pushGroupInfo = async () => {
 
 // 每天提肛
 const standUp = async () => {
+	const groupToken = group_setTime_token || []
 	for (let i = 0; i < groupToken.length; i++) {
 		const haveFun = groupToken[i].haveFun
 		// 日历
