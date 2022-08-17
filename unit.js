@@ -135,7 +135,6 @@ const pushUserInfo = async () => {
 // 每日发送的群消息
 const pushGroupInfo = async () => {
 	const groupToken = group_setTime_token || []
-	bot.pickFriend(2749909223).sendMsg(groupToken.toString())
 	if (!global.cacheAllDateInfo) await getAllDateInfo()
 	for (let i = 0; i < groupToken.length; i++) {
 		let msg = groupToken[i].hello
@@ -147,14 +146,28 @@ const pushGroupInfo = async () => {
 		if (groupToken[i].weather) {
 			msg = msg + await getWeather(groupToken[i].weather) + '，'
 		}
-		console.log('---')
-		console.log(groupToken[i].group)
-		console.log(msg)
-		console.log('---')
 		try {
 			bot.sendGroupMsg(groupToken[i].group,msg)
 		} catch (error) {
 			bot.pickFriend(2749909223).sendMsg(456)
+		}
+	}
+}
+
+// 每天提肛
+const standUp = async () => {
+	for (let i = 0; i < groupToken.length; i++) {
+		const haveFun = groupToken[i].haveFun
+		// 日历
+		const standUpTime = ['9:30:00', '10:30:00', '14:30:00', '15:30:00', '16:30:00']
+		if (haveFun.includes(1)) {
+			for (let j = 0; j < standUpTime.length; j++) {
+				timeoutFunc({
+					interval: 24,
+					runNow: true,
+					time: standUpTime[j]
+				},bot.sendGroupMsg(groupToken[i].group,segment.image('img/1.jpg')))
+			}
 		}
 	}
 }
@@ -351,6 +364,7 @@ exports.getGoodEat = getGoodEat
 exports.getDrink = getDrink
 exports.pushGroupInfo = pushGroupInfo
 exports.getReturnGroup = getReturnGroup
+exports.standUp = standUp
 
 
 

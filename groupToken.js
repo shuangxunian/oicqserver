@@ -45,13 +45,14 @@ exports.qq_setTime_token = [
   }
 ]
 
-
+// 0 早上好
+// 1 提肛
 exports.group_setTime_token = [
   {
     group: 681467770,
     hello: '群友们早上好，',
     weather: '杭州',
-    haveFun: [0]
+    haveFun: [0, 1]
   }, {
     group: 729462289,
     hello: '同学们早上好，',

@@ -6,6 +6,7 @@ const {
 	getAllDateInfo,
 	timeoutFunc,
 	pushGroupInfo,
+	standUp,
 } = require("./unit")
 
 bot.on("system.online", function () {
@@ -31,7 +32,10 @@ bot.on("system.online", function () {
 	// 每天早上群聊信息
 	timeoutFunc({
 		interval: 24,
-		runNow: true,
+		runNow: false,
 		time: '08:00:00'
 	},pushGroupInfo)
+
+	// 每天发提肛
+	standUp()
 })
