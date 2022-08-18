@@ -6,6 +6,18 @@ const { bot } = require("./index")
 
 const { group_token, qq_setTime_token, group_setTime_token } = require("./groupToken")
 
+const weatherMap = {
+  '杭州': '101210101',
+	'西湖': '101210113',
+  '南京': '101190101',
+  '天津': '101030100',
+  '广州': '101280101',
+  '苏州': '101190401',
+  '齐齐哈尔': '101050201',
+	'沈阳': '101070101',
+	'沈北新区': '101070113',
+}
+
 // 日期信息的缓存，防止请求API次数过多
 global.cacheAllDateInfo = ''
 
@@ -24,19 +36,19 @@ const timeoutFunc = (config, func) => {
 
 // 获取天气信息
 const getWeather = async (city) => {
-	try {
-		const res = await rp({
-			method: 'POST',
-			url: `https://geoapi.qweather.com/v2/city/lookup?key=${process.env.weatherAPI}&location=${city}`,
-			body: [],
-			json: true // Automatically stringifies the body to JSON
-		})
-		console.log(res)
-		// if (res.errcode === 100) return segment.image('img/2.jpg')
-		// return city + '今日' + res.wea + '，温度为' + res.tem_night + '-' + res.tem_day + '，当前温度' + res.tem
-	} catch (err) {
-		return '该城市API不支持'
-	}
+	// try {
+	// 	const res = await rp({
+	// 		method: 'POST',
+	// 		url: 'https://www.tianqiapi.com/free/day?appid=56761788&appsecret=ti3hP8y9&city=' + encodeURI(city),
+	// 		body: [],
+	// 		json: true // Automatically stringifies the body to JSON
+	// 	})
+	// 	if (res.errcode === 100) return segment.image('img/2.jpg')
+	// 	return city + '今日' + res.wea + '，温度为' + res.tem_night + '-' + res.tem_day + '，当前温度' + res.tem
+	// } catch (err) {
+	// 	return '该城市API不支持'
+	// }
+	return '此API已坏，正在修复'
 }
 
 
@@ -220,7 +232,7 @@ const getSchoolEat = async () => {
 
 // 机器人能做什么
 const botCanDo = () => {
-	return '可以询问（地点）天气，请问（学校问题），今天在学校吃什么，今天吃什么，今天吃什么好的等问题，均可以回答'
+	return '可以问今天吃什么，请问（学校问题），今天在学校吃什么，今天吃什么好的等问题，均可以回答'
 }
 
 // 今天吃什么
